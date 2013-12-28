@@ -1,4 +1,4 @@
-class archiver_appliance($nodes_fqdn = undef) {
+class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
   File { owner => root, group => root, mode => '0644' }
 
   package { 'openjdk-7-jdk':

@@ -1,11 +1,14 @@
 class archiver_appliance::node(
-  $nodes_fqdn = undef
+  $nodes_fqdn = undef,
+  $loadbalancer
 )
 {
   include apt
   class { 'archiver_appliance':
-    nodes_fqdn	=> $archiver_nodes,
+    nodes_fqdn		=> $archiver_nodes,
+    loadbalancer	=> $loadbalancer,
   }
+
   apt::source { 'nsls2repo':
     location    => 'http://epics.nsls2.bnl.gov/debian/',
     release     => 'wheezy',
