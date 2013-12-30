@@ -28,9 +28,8 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     user	=> 'archappl',
     password	=> 'archappl',
     host	=> 'localhost',
-  # UTF8 unfortunately does not work right now since archive appliance uses to long keys, so we have to use the old-fashioned MySQL default :-(
-    charset	=> 'latin1',
-    collate	=> 'latin1_swedish_ci',
+    charset	=> 'utf8',
+    collate	=> 'utf8_general_ci',
     grant	=> ['ALL'],
   }
 
@@ -62,16 +61,16 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     content	=> template('archiver_appliance/appliances.xml'),
   }
 
-  file { '/tmp/archappl_v0.0.1_SNAPSHOT_19-November-2013T10-01-18.tar.gz':
+  file { '/tmp/archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz':
     ensure	=> file,
-    source	=> 'puppet:///modules/archiver_appliance/archappl_v0.0.1_SNAPSHOT_19-November-2013T10-01-18.tar.gz',
+    source	=> 'puppet:///modules/archiver_appliance/archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz',
   }
 
   exec { 'extract archiver appliance archive':
-    command	=> '/bin/tar -xzf /tmp/archappl_v0.0.1_SNAPSHOT_19-November-2013T10-01-18.tar.gz',
+    command	=> '/bin/tar -xzf /tmp/archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz',
     cwd		=> '/tmp/',
     creates	=> '/tmp/engine.war',
-    subscribe	=> File['/tmp/archappl_v0.0.1_SNAPSHOT_19-November-2013T10-01-18.tar.gz'],
+    subscribe	=> File['/tmp/archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz'],
   }
 
   exec { 'deploy multiple tomcats':
