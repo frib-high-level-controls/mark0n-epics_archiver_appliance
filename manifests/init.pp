@@ -61,16 +61,16 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     content	=> template('archiver_appliance/appliances.xml'),
   }
 
-  file { '/tmp/archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz':
+  file { '/tmp/archappl_v0.0.1_SNAPSHOT_09-January-2014T09-35-32.tar.gz':
     ensure	=> file,
-    source	=> 'puppet:///modules/archiver_appliance/archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz',
+    source	=> 'puppet:///modules/archiver_appliance/archappl_v0.0.1_SNAPSHOT_09-January-2014T09-35-32.tar.gz',
   }
 
   exec { 'extract archiver appliance archive':
-    command	=> '/bin/tar -xzf /tmp/archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz',
+    command	=> '/bin/tar -xzf /tmp/archappl_v0.0.1_SNAPSHOT_09-January-2014T09-35-32.tar.gz',
     cwd		=> '/tmp/',
     creates	=> '/tmp/engine.war',
-    subscribe	=> File['/tmp/archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz'],
+    subscribe	=> File['/tmp/archappl_v0.0.1_SNAPSHOT_09-January-2014T09-35-32.tar.gz'],
   }
 
   exec { 'deploy multiple tomcats':
