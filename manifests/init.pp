@@ -172,14 +172,20 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
 
   file { '/srv/sts':
     ensure	=> directory,
+    owner	=> 'tomcat7',
+    require	=> Package['tomcat7'],
   }
 
   file { '/srv/mts':
     ensure	=> directory,
+    owner	=> 'tomcat7',
+    require	=> Package['tomcat7'],
   }
 
   file { '/srv/lts':
     ensure	=> directory,
+    owner	=> 'tomcat7',
+    require	=> Package['tomcat7'],
   }
 
   file { '/etc/default/archappl-engine':
