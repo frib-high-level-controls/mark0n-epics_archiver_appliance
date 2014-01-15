@@ -12,3 +12,9 @@ CATALINA_HOME=/usr/share/tomcat7
 
 # Directory for per-instance configuration files and webapps
 CATALINA_BASE=/var/lib/tomcat7-archappl/mgmt
+
+EPICS_CA_AUTO_ADDR_LIST=yes
+
+# For some weird reason CAJ does not connect if EPICS_CA_ADDR_LIST is empty
+# (some strange default?). So we set it to localhost here:
+EPICS_CA_ADDR_LIST=127.0.0.1
