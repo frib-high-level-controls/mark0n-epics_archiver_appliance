@@ -190,25 +190,25 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
 
   file { '/etc/default/archappl-engine':
     ensure	=> file,
-    content	=> template('archiver_appliance/default/archappl-engine'),
+    content	=> template('archiver_appliance/etc/default/archappl-engine'),
     notify	=> Service['archappl-engine'],
   }
 
   file { '/etc/default/archappl-etl':
     ensure	=> file,
-    content	=> template('archiver_appliance/default/archappl-etl'),
+    content	=> template('archiver_appliance/etc/default/archappl-etl'),
     notify	=> Service['archappl-etl'],
   }
 
   file { '/etc/default/archappl-mgmt':
     ensure	=> file,
-    content	=> template('archiver_appliance/default/archappl-mgmt'),
+    content	=> template('archiver_appliance/etc/default/archappl-mgmt'),
     notify	=> Service['archappl-mgmt'],
   }
 
   file { '/etc/default/archappl-retrieval':
     ensure	=> file,
-    content	=> template('archiver_appliance/default/archappl-retrieval'),
+    content	=> template('archiver_appliance/etc/default/archappl-retrieval'),
     notify	=> Service['archappl-retrieval'],
   }
 
