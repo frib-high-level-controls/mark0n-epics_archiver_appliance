@@ -11,14 +11,14 @@ class archiver_appliance::node(
 {
   include apt
   class { 'archiver_appliance':
-    nodes_fqdn		=> $archiver_nodes,
-    loadbalancer	=> $loadbalancer,
-    archappl_tarball_url	=> $archappl_tarball_url,
-    archappl_tarball_md5sum	=> $archappl_tarball_md5sum,
-    mysqlconnector_tarball_url	=> $mysqlconnector_tarball_url,
-    mysqlconnector_tarball_md5sum	=> $mysqlconnector_tarball_md5sum,
-    tomcatjdbc_tarball_url	=> $tomcatjdbc_tarball_url,
-    tomcatjdbc_tarball_md5sum	=> $tomcatjdbc_tarball_md5sum,
+    nodes_fqdn                    => $archiver_nodes,
+    loadbalancer                  => $loadbalancer,
+    archappl_tarball_url          => $archappl_tarball_url,
+    archappl_tarball_md5sum       => $archappl_tarball_md5sum,
+    mysqlconnector_tarball_url    => $mysqlconnector_tarball_url,
+    mysqlconnector_tarball_md5sum => $mysqlconnector_tarball_md5sum,
+    tomcatjdbc_tarball_url        => $tomcatjdbc_tarball_url,
+    tomcatjdbc_tarball_md5sum     => $tomcatjdbc_tarball_md5sum,
   }
 
   apt::source { 'nsls2repo':
@@ -41,16 +41,16 @@ class archiver_appliance::node(
   #}
 
   package { 'epics-catools':
-    ensure	=> installed,
-    require	=> Apt::Source['nsls2repo'],
+    ensure  => installed,
+    require => Apt::Source['nsls2repo'],
   }
 
   # Archiver appliance uses its own tomcat containers so we do not need the default one.
   service { 'tomcat7':
-    ensure	=> stopped,
-    enable	=> false,
-    hasrestart	=> true,
-    hasstatus	=> true,
-    require	=> Package['tomcat7'],
+    ensure     => stopped,
+    enable     => false,
+    hasrestart => true,
+    hasstatus  => true,
+    require    => Package['tomcat7'],
   }
 }
