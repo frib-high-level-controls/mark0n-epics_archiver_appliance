@@ -1,4 +1,6 @@
 class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
+  $archappl_tarball = 'archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz'
+
   File { owner => root, group => root, mode => '0644' }
 
   package { 'openjdk-7-jdk':
@@ -36,7 +38,10 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
   exec { 'create MySQL tables for archiver appliance':
     command	=> '/usr/bin/mysql --user=archappl --password=archappl --database=archappl < /tmp/install_scripts/archappl_mysql.sql',
     onlyif	=> "/usr/bin/test `/usr/bin/mysql --user=archappl --password=archappl --database=archappl --batch --skip-column-names -e 'SHOW TABLES' | /usr/bin/wc -l` -lt 4",
-    require	=> Mysql::Db['archappl'],
+    require	=> [
+      Mysql::Db['archappl'],
+      Archive['archappl']
+    ]
   }
 
   package { 'libmysql-java':
@@ -61,16 +66,14 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     content	=> template('archiver_appliance/appliances.xml'),
   }
 
-  file { '/tmp/archappl_v0.0.1_SNAPSHOT_09-January-2014T09-35-32.tar.gz':
-    ensure	=> file,
-    source	=> 'puppet:///modules/archiver_appliance/archappl_v0.0.1_SNAPSHOT_09-January-2014T09-35-32.tar.gz',
-  }
-
-  exec { 'extract archiver appliance archive':
-    command	=> '/bin/tar -xzf /tmp/archappl_v0.0.1_SNAPSHOT_09-January-2014T09-35-32.tar.gz',
-    cwd		=> '/tmp/',
-    creates	=> '/tmp/engine.war',
-    subscribe	=> File['/tmp/archappl_v0.0.1_SNAPSHOT_09-January-2014T09-35-32.tar.gz'],
+  archive { 'archappl':
+    ensure => present,
+    url    => 'http://downloads.sourceforge.net/project/epicsarchiverap/snapshots/archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz',
+    src_target	=> '/tmp',
+    target => '/tmp',
+    extension	=> 'tar.gz',
+    checksum	=> true,
+    digest_string	=> '36d68a803d52bb3cbfb676a79c93799e',
   }
 
   exec { 'deploy multiple tomcats':
@@ -83,7 +86,7 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     creates	=> '/var/lib/tomcat7-archappl',
     require	=> [
       Package['tomcat7'],
-      Exec['extract archiver appliance archive'],
+      Archive['archappl'],
       File['/etc/archappl/appliances.xml'],
     ],
     notify	=> File['/var/lib/tomcat7-archappl'],
@@ -102,16 +105,14 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     require	=> Package['tomcat7'],
   }
 
-  file { '/tmp/apache-tomcat-jdbc-1.1.0.1-bin.tar.gz':
-    ensure	=> file,
-    source	=> 'puppet:///modules/archiver_appliance/apache-tomcat-jdbc-1.1.0.1-bin.tar.gz',
-  }
-
-  exec { 'install Tomcat JDBC Connection Pool':
-    command	=> '/bin/tar -xzf /tmp/apache-tomcat-jdbc-1.1.0.1-bin.tar.gz -C /usr/share/tomcat7/lib/',
-    creates	=> '/usr/share/tomcat7/lib/tomcat-jdbc.jar',
-    require	=> Package['tomcat7'],
-    subscribe	=> File['/tmp/apache-tomcat-jdbc-1.1.0.1-bin.tar.gz'],
+  archive { 'apache-tomcat-jdbc':
+    ensure => present,
+    url    => 'http://people.apache.org/~fhanik/jdbc-pool/v1.1.0.1/apache-tomcat-jdbc-1.1.0.1-bin.tar.gz',
+    src_target	=> '/tmp',
+    target => '/usr/share/tomcat7/lib',
+    extension	=> 'tar.gz',
+    checksum	=> true,
+    digest_string	=> '588c6fd5de5157780b1091a82cfbdd2d',
   }
 
   file { '/var/lib/tomcat7-archappl/engine/webapps/engine.war':
@@ -243,7 +244,7 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     hasstatus	=> true,
     require	=> [
       File['/usr/share/tomcat7/lib/mysql-connector-java-5.1.27-bin.jar'],
-      Exec['install Tomcat JDBC Connection Pool'],
+      Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
       File['/usr/share/tomcat7/lib/log4j.properties'],
@@ -265,7 +266,7 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     hasstatus	=> true,
     require	=> [
       File['/usr/share/tomcat7/lib/mysql-connector-java-5.1.27-bin.jar'],
-      Exec['install Tomcat JDBC Connection Pool'],
+      Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
       File['/usr/share/tomcat7/lib/log4j.properties'],
@@ -287,7 +288,7 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     hasstatus	=> true,
     require	=> [
       File['/usr/share/tomcat7/lib/mysql-connector-java-5.1.27-bin.jar'],
-      Exec['install Tomcat JDBC Connection Pool'],
+      Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
       File['/usr/share/tomcat7/lib/log4j.properties'],
@@ -309,7 +310,7 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     hasstatus	=> true,
     require	=> [
       File['/usr/share/tomcat7/lib/mysql-connector-java-5.1.27-bin.jar'],
-      Exec['install Tomcat JDBC Connection Pool'],
+      Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
       File['/usr/share/tomcat7/lib/log4j.properties'],

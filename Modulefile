@@ -10,3 +10,4 @@ project_page 'https://stash.nscl.msu.edu/projects/DEPLOY/repos/puppet_module_arc
 dependency 'puppetlabs/mysql'
 dependency 'puppetlabs/apache'
 dependency 'puppetlabs/apt'
+dependency 'smarchive/archive'
