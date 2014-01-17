@@ -1,6 +1,13 @@
-class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
-  $archappl_tarball = 'archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz'
-
+class archiver_appliance(
+  $nodes_fqdn = undef,
+  $loadbalancer,
+  $archappl_tarball_url,
+  $archappl_tarball_md5sum,
+  $mysqlconnector_tarball_url,
+  $mysqlconnector_tarball_md5sum,
+  $tomcatjdbc_tarball_url,
+  $tomcatjdbc_tarball_md5sum,
+) {
   File { owner => root, group => root, mode => '0644' }
 
   package { 'openjdk-7-jdk':
@@ -68,12 +75,12 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
 
   archive { 'archappl':
     ensure => present,
-    url    => 'http://downloads.sourceforge.net/project/epicsarchiverap/snapshots/archappl_v0.0.1_SNAPSHOT_19-December-2013T10-26-34.tar.gz',
+    url    => $archappl_tarball_url,
     src_target	=> '/tmp',
     target => '/tmp',
     extension	=> 'tar.gz',
     checksum	=> true,
-    digest_string	=> '36d68a803d52bb3cbfb676a79c93799e',
+    digest_string	=> $archappl_tarball_md5sum,
   }
 
   exec { 'deploy multiple tomcats':
@@ -99,20 +106,25 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     group	=> tomcat7,
   }
 
-  file { '/usr/share/tomcat7/lib/mysql-connector-java-5.1.27-bin.jar':
-    ensure	=> file,
-    source	=> 'puppet:///modules/archiver_appliance/mysql-connector-java-5.1.27-bin.jar',
+  archive { 'mysql-connector-java':
+    ensure	=> present,
+    url		=> $mysqlconnector_tarball_url,
+    src_target	=> '/tmp',
+    target	=> '/usr/share/tomcat7/lib',
+    extension	=> 'tar.gz',
+    checksum	=> true,
+    digest_string	=> $mysqlconnector_tarball_md5sum,
     require	=> Package['tomcat7'],
   }
 
   archive { 'apache-tomcat-jdbc':
     ensure => present,
-    url    => 'http://people.apache.org/~fhanik/jdbc-pool/v1.1.0.1/apache-tomcat-jdbc-1.1.0.1-bin.tar.gz',
+    url    => $tomcatjdbc_tarball_url,
     src_target	=> '/tmp',
     target => '/usr/share/tomcat7/lib',
     extension	=> 'tar.gz',
     checksum	=> true,
-    digest_string	=> '588c6fd5de5157780b1091a82cfbdd2d',
+    digest_string	=> $tomcatjdbc_tarball_md5sum,
   }
 
   file { '/var/lib/tomcat7-archappl/engine/webapps/engine.war':
@@ -243,7 +255,7 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     hasrestart	=> true,
     hasstatus	=> true,
     require	=> [
-      File['/usr/share/tomcat7/lib/mysql-connector-java-5.1.27-bin.jar'],
+      Archive['mysql-connector-java'],
       Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
@@ -265,7 +277,7 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     hasrestart	=> true,
     hasstatus	=> true,
     require	=> [
-      File['/usr/share/tomcat7/lib/mysql-connector-java-5.1.27-bin.jar'],
+      Archive['mysql-connector-java'],
       Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
@@ -287,7 +299,7 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     hasrestart	=> true,
     hasstatus	=> true,
     require	=> [
-      File['/usr/share/tomcat7/lib/mysql-connector-java-5.1.27-bin.jar'],
+      Archive['mysql-connector-java'],
       Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
@@ -309,7 +321,7 @@ class archiver_appliance($nodes_fqdn = undef, $loadbalancer) {
     hasrestart	=> true,
     hasstatus	=> true,
     require	=> [
-      File['/usr/share/tomcat7/lib/mysql-connector-java-5.1.27-bin.jar'],
+      Archive['mysql-connector-java'],
       Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],

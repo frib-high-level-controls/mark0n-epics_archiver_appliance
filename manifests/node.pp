@@ -1,12 +1,24 @@
 class archiver_appliance::node(
   $nodes_fqdn = undef,
-  $loadbalancer
+  $loadbalancer,
+  $archappl_tarball_url,
+  $archappl_tarball_md5sum,
+  $mysqlconnector_tarball_url,
+  $mysqlconnector_tarball_md5sum,
+  $tomcatjdbc_tarball_url,
+  $tomcatjdbc_tarball_md5sum
 )
 {
   include apt
   class { 'archiver_appliance':
     nodes_fqdn		=> $archiver_nodes,
     loadbalancer	=> $loadbalancer,
+    archappl_tarball_url	=> $archappl_tarball_url,
+    archappl_tarball_md5sum	=> $archappl_tarball_md5sum,
+    mysqlconnector_tarball_url	=> $mysqlconnector_tarball_url,
+    mysqlconnector_tarball_md5sum	=> $mysqlconnector_tarball_md5sum,
+    tomcatjdbc_tarball_url	=> $tomcatjdbc_tarball_url,
+    tomcatjdbc_tarball_md5sum	=> $tomcatjdbc_tarball_md5sum,
   }
 
   apt::source { 'nsls2repo':
