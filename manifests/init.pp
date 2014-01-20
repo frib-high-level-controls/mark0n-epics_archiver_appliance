@@ -18,15 +18,6 @@ class archiver_appliance(
     ensure => installed,
   }
 
-  # work around problems with Java name resolution
-  file { '/etc/hosts':
-    ensure => file,
-    source => 'puppet:///modules/archiver_appliance/etc/hosts',
-    owner  => root,
-    group  => root,
-    mode   => '0644',
-  }
-
   class { '::mysql::server':
     package_name    => 'mysql-server',
     package_ensure  => present,
