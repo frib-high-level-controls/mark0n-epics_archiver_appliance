@@ -98,14 +98,15 @@ class archiver_appliance(
   }
 
   archive { 'mysql-connector-java':
-    ensure        => present,
-    url           => $mysqlconnector_tarball_url,
-    src_target    => '/tmp',
-    target        => '/usr/share/tomcat7/lib',
-    extension     => 'tar.gz',
-    checksum      => true,
-    digest_string => $mysqlconnector_tarball_md5sum,
-    require       => Package['tomcat7'],
+    ensure           => present,
+    url              => $mysqlconnector_tarball_url,
+    src_target       => '/tmp',
+    target           => '/usr/share/tomcat7/lib',
+    extension        => 'tar.gz',
+    checksum         => true,
+    digest_string    => $mysqlconnector_tarball_md5sum,
+    require          => Package['tomcat7'],
+    strip_components => 1,
   }
 
   archive { 'apache-tomcat-jdbc':
