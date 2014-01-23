@@ -1,6 +1,6 @@
 name    'frib-archiver_appliance'
 version '0.1.0'
-source 'ssh://git@stash.nscl.msu.edu:7999/deploy/puppet_module_archiver_appliance.git'
+source 'https://stash.nscl.msu.edu/scm/deploy/puppet_module_archiver_appliance.git'
 author 'konrad'
 license 'Apache License, Version 2.0'
 summary 'Puppet module for EPICS Archiver Appliance'
