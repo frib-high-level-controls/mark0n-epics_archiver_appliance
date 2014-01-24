@@ -11,6 +11,8 @@ class archiver_appliance(
   $mid_term_storage = '/srv/mts',
   $long_term_storage = '/srv/lts',
 ) {
+  include apt
+
   File { owner => root, group => root, mode => '0644' }
 
   package { 'openjdk-7-jdk':
@@ -19,6 +21,16 @@ class archiver_appliance(
 
   package { 'tomcat7':
     ensure => installed,
+  }
+
+  # Archiver appliance uses its own tomcat containers so we do not need the
+  # default one.
+  service { 'tomcat7':
+    ensure     => stopped,
+    enable     => false,
+    hasrestart => true,
+    hasstatus  => true,
+    require    => Package['tomcat7'],
   }
 
   class { '::mysql::server':
