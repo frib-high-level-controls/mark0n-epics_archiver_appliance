@@ -6,7 +6,10 @@ class archiver_appliance::node(
   $mysqlconnector_tarball_url,
   $mysqlconnector_tarball_md5sum,
   $tomcatjdbc_tarball_url,
-  $tomcatjdbc_tarball_md5sum
+  $tomcatjdbc_tarball_md5sum,
+  $short_term_storage = '/srv/sts',
+  $mid_term_storage = '/srv/mts',
+  $long_term_storage = '/srv/lts'
 )
 {
   include apt
@@ -19,6 +22,9 @@ class archiver_appliance::node(
     mysqlconnector_tarball_md5sum => $mysqlconnector_tarball_md5sum,
     tomcatjdbc_tarball_url        => $tomcatjdbc_tarball_url,
     tomcatjdbc_tarball_md5sum     => $tomcatjdbc_tarball_md5sum,
+    short_term_storage            => $short_term_storage,
+    mid_term_storage              => $mid_term_storage,
+    long_term_storage             => $long_term_storage,
   }
 
   apt::source { 'nsls2repo':

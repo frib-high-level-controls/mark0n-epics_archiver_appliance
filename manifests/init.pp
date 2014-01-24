@@ -7,6 +7,9 @@ class archiver_appliance(
   $mysqlconnector_tarball_md5sum,
   $tomcatjdbc_tarball_url,
   $tomcatjdbc_tarball_md5sum,
+  $short_term_storage = '/srv/sts',
+  $mid_term_storage = '/srv/mts',
+  $long_term_storage = '/srv/lts',
 ) {
   File { owner => root, group => root, mode => '0644' }
 
@@ -175,22 +178,28 @@ class archiver_appliance(
     require => Exec['deploy multiple tomcats'],
   }
 
-  file { '/srv/sts':
-    ensure  => directory,
-    owner   => 'tomcat7',
-    require => Package['tomcat7'],
+  if !defined(File[$short_term_storage]) {
+    file { $short_term_storage:
+      ensure  => directory,
+      owner   => 'tomcat7',
+      require => Package['tomcat7'],
+    }
   }
 
-  file { '/srv/mts':
-    ensure  => directory,
-    owner   => 'tomcat7',
-    require => Package['tomcat7'],
+  if !defined(File[$mid_term_storage]) {
+    file { $mid_term_storage:
+      ensure  => directory,
+      owner   => 'tomcat7',
+      require => Package['tomcat7'],
+    }
   }
 
-  file { '/srv/lts':
-    ensure  => directory,
-    owner   => 'tomcat7',
-    require => Package['tomcat7'],
+  if !defined(File[$long_term_storage]) {
+    file { $long_term_storage:
+      ensure  => directory,
+      owner   => 'tomcat7',
+      require => Package['tomcat7'],
+    }
   }
 
   file { '/etc/default/archappl-engine':
