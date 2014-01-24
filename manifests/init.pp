@@ -37,7 +37,7 @@ class archiver_appliance(
   }
 
   exec { 'create MySQL tables for archiver appliance':
-    command => '/usr/bin/mysql --user=archappl --password=archappl --database=archappl < /tmp/install_scripts/archappl_mysql.sql',
+    command => '/usr/bin/mysql --user=archappl --password=archappl --database=archappl < /tmp/archappl/install_scripts/archappl_mysql.sql',
     onlyif  => "/usr/bin/test `/usr/bin/mysql --user=archappl --password=archappl --database=archappl --batch --skip-column-names -e 'SHOW TABLES' | /usr/bin/wc -l` -lt 4",
     require => [
       Mysql::Db['archappl'],
@@ -71,14 +71,14 @@ class archiver_appliance(
     ensure        => present,
     url           => $archappl_tarball_url,
     src_target    => '/tmp',
-    target        => '/tmp',
+    target        => '/tmp/archappl',
     extension     => 'tar.gz',
     checksum      => true,
     digest_string => $archappl_tarball_md5sum,
   }
 
   exec { 'deploy multiple tomcats':
-    command     => '/usr/bin/python /tmp/install_scripts/deployMultipleTomcats.py /var/lib/tomcat7-archappl/',
+    command     => '/usr/bin/python /tmp/archappl/install_scripts/deployMultipleTomcats.py /var/lib/tomcat7-archappl/',
     environment => [
       'TOMCAT_HOME=/var/lib/tomcat7/',
       'ARCHAPPL_MYIDENTITY=appliance0',
@@ -124,28 +124,28 @@ class archiver_appliance(
 
   file { '/var/lib/tomcat7-archappl/engine/webapps/engine.war':
     ensure  => file,
-    source  => '/tmp/engine.war',
+    source  => '/tmp/archappl/engine.war',
     owner   => tomcat7,
     require => Exec['deploy multiple tomcats'],
   }
 
   file { '/var/lib/tomcat7-archappl/etl/webapps/etl.war':
     ensure  => file,
-    source  => '/tmp/etl.war',
+    source  => '/tmp/archappl/etl.war',
     owner   => tomcat7,
     require => Exec['deploy multiple tomcats'],
   }
 
   file { '/var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war':
     ensure  => file,
-    source  => '/tmp/mgmt.war',
+    source  => '/tmp/archappl/mgmt.war',
     owner   => tomcat7,
     require => Exec['deploy multiple tomcats'],
   }
 
   file { '/var/lib/tomcat7-archappl/retrieval/webapps/retrieval.war':
     ensure  => file,
-    source  => '/tmp/retrieval.war',
+    source  => '/tmp/archappl/retrieval.war',
     owner   => tomcat7,
     require => Exec['deploy multiple tomcats'],
   }
