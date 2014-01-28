@@ -87,6 +87,7 @@ class archiver_appliance(
     extension     => 'tar.gz',
     checksum      => true,
     digest_string => $archappl_tarball_md5sum,
+    timeout       => 600,
   }
 
   exec { 'deploy multiple tomcats':
@@ -132,6 +133,7 @@ class archiver_appliance(
     extension     => 'tar.gz',
     checksum      => true,
     digest_string => $tomcatjdbc_tarball_md5sum,
+    timeout       => 600,
   }
 
   file { '/var/lib/tomcat7-archappl/engine/webapps/engine.war':
