@@ -22,7 +22,7 @@ $tomcatjdbc_tarball_url = 'http://people.apache.org/~fhanik/jdbc-pool/v1.1.0.1/a
 $tomcatjdbc_tarball_md5sum = '588c6fd5de5157780b1091a82cfbdd2d'
 
 node 'archappl0.example.com' {
-  class { 'archiver_appliance::node':
+  class { 'archiver_appliance':
     nodes_fqdn                    => $archiver_nodes,
     loadbalancer                  => $loadbalancer,
     archappl_tarball_url          => $archappl_tarball_url,
@@ -35,7 +35,7 @@ node 'archappl0.example.com' {
 }
 
 node 'archappl1.example.com' {
-  class { 'archiver_appliance::node':
+  class { 'archiver_appliance':
     nodes_fqdn                    => $archiver_nodes,
     loadbalancer                  => $loadbalancer,
     archappl_tarball_url          => $archappl_tarball_url,
