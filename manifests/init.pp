@@ -113,16 +113,22 @@ class archiver_appliance(
     group   => tomcat7,
   }
 
-  archive { 'mysql-connector-java':
-    ensure           => present,
-    url              => $mysqlconnector_tarball_url,
-    src_target       => '/tmp',
-    target           => '/usr/share/tomcat7/lib',
-    extension        => 'tar.gz',
-    checksum         => true,
-    digest_string    => $mysqlconnector_tarball_md5sum,
-    require          => Package['tomcat7'],
-    strip_components => 1,
+  file { '/usr/share/tomcat7/lib/mysql-connector-java.jar':
+    ensure => link,
+    target => '../../java/mysql-connector-java.jar',
+    require => [
+      Package['libmysql-java'],
+      Package['tomcat7'],
+    ],
+  }
+
+  file { '/usr/share/tomcat7/lib/mysql.jar':
+    ensure => link,
+    target => '../../java/mysql.jar',
+    require => [
+      Package['libmysql-java'],
+      Package['tomcat7'],
+    ],
   }
 
   archive { 'apache-tomcat-jdbc':
@@ -270,7 +276,8 @@ class archiver_appliance(
     hasrestart => true,
     hasstatus  => true,
     require    => [
-      Archive['mysql-connector-java'],
+      File['/usr/share/tomcat7/lib/mysql-connector-java.jar'],
+      File['/usr/share/tomcat7/lib/mysql.jar'],
       Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
@@ -292,7 +299,8 @@ class archiver_appliance(
     hasrestart => true,
     hasstatus  => true,
     require    => [
-      Archive['mysql-connector-java'],
+      File['/usr/share/tomcat7/lib/mysql-connector-java.jar'],
+      File['/usr/share/tomcat7/lib/mysql.jar'],
       Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
@@ -314,7 +322,8 @@ class archiver_appliance(
     hasrestart => true,
     hasstatus  => true,
     require    => [
-      Archive['mysql-connector-java'],
+      File['/usr/share/tomcat7/lib/mysql-connector-java.jar'],
+      File['/usr/share/tomcat7/lib/mysql.jar'],
       Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
@@ -336,7 +345,8 @@ class archiver_appliance(
     hasrestart => true,
     hasstatus  => true,
     require    => [
-      Archive['mysql-connector-java'],
+      File['/usr/share/tomcat7/lib/mysql-connector-java.jar'],
+      File['/usr/share/tomcat7/lib/mysql.jar'],
       Archive['apache-tomcat-jdbc'],
       Package['openjdk-7-jdk'],
       Package['libmysql-java'],
