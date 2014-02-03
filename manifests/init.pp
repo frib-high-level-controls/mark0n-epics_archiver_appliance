@@ -1,12 +1,20 @@
+# This class sets up a the EPICS Archiver Appliance on a node. This node can
+# be a member of a cluster of machines. The following services will be
+# deployed:
+# -management interface
+# -archive engine
+# -retrieval process
+# -ETL process
+#
 class archiver_appliance(
   $nodes_fqdn = undef,
-  $loadbalancer,
-  $archappl_tarball_url,
-  $archappl_tarball_md5sum,
-  $mysqlconnector_tarball_url,
-  $mysqlconnector_tarball_md5sum,
-  $tomcatjdbc_tarball_url,
-  $tomcatjdbc_tarball_md5sum,
+  $loadbalancer = undef,
+  $archappl_tarball_url = undef,
+  $archappl_tarball_md5sum = undef,
+  $mysqlconnector_tarball_url = undef,
+  $mysqlconnector_tarball_md5sum = undef,
+  $tomcatjdbc_tarball_url = undef,
+  $tomcatjdbc_tarball_md5sum = undef,
   $short_term_storage = '/srv/sts',
   $mid_term_storage = '/srv/mts',
   $long_term_storage = '/srv/lts',
@@ -50,7 +58,7 @@ class archiver_appliance(
 
   exec { 'create MySQL tables for archiver appliance':
     command => '/usr/bin/mysql --user=archappl --password=archappl --database=archappl < /tmp/archappl/install_scripts/archappl_mysql.sql',
-    onlyif  => "/usr/bin/test `/usr/bin/mysql --user=archappl --password=archappl --database=archappl --batch --skip-column-names -e 'SHOW TABLES' | /usr/bin/wc -l` -lt 4",
+    onlyif  => '/usr/bin/test `/usr/bin/mysql --user=archappl --password=archappl --database=archappl --batch --skip-column-names -e \'SHOW TABLES\' | /usr/bin/wc -l` -lt 4',
     require => [
       Mysql::Db['archappl'],
       Archive['archappl']
@@ -114,8 +122,8 @@ class archiver_appliance(
   }
 
   file { '/usr/share/tomcat7/lib/mysql-connector-java.jar':
-    ensure => link,
-    target => '../../java/mysql-connector-java.jar',
+    ensure  => link,
+    target  => '../../java/mysql-connector-java.jar',
     require => [
       Package['libmysql-java'],
       Package['tomcat7'],
@@ -123,8 +131,8 @@ class archiver_appliance(
   }
 
   file { '/usr/share/tomcat7/lib/mysql.jar':
-    ensure => link,
-    target => '../../java/mysql.jar',
+    ensure  => link,
+    target  => '../../java/mysql.jar',
     require => [
       Package['libmysql-java'],
       Package['tomcat7'],
