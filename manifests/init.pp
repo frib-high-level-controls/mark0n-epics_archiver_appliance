@@ -11,8 +11,6 @@ class archiver_appliance(
   $loadbalancer = undef,
   $archappl_tarball_url = undef,
   $archappl_tarball_md5sum = undef,
-  $mysqlconnector_tarball_url = undef,
-  $mysqlconnector_tarball_md5sum = undef,
   $tomcatjdbc_tarball_url = undef,
   $tomcatjdbc_tarball_md5sum = undef,
   $short_term_storage = '/srv/sts',
