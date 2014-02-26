@@ -17,6 +17,8 @@ class archiver_appliance(
   $mid_term_storage = '/srv/mts',
   $long_term_storage = '/srv/lts',
 ) {
+  $identity = inline_template("appliance<%= @nodes_fqdn.index(@fqdn) %>")
+
   include apt
 
   File { owner => root, group => root, mode => '0644' }
@@ -100,7 +102,7 @@ class archiver_appliance(
     command     => '/usr/bin/python /tmp/archappl/install_scripts/deployMultipleTomcats.py /var/lib/tomcat7-archappl/',
     environment => [
       'TOMCAT_HOME=/var/lib/tomcat7/',
-      'ARCHAPPL_MYIDENTITY=appliance0',
+      "ARCHAPPL_MYIDENTITY=${identity}",
       'ARCHAPPL_APPLIANCES=/etc/archappl/appliances.xml',
     ],
     creates     => '/var/lib/tomcat7-archappl',
