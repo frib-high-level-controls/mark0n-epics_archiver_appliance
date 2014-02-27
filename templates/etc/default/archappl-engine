@@ -2,7 +2,7 @@ ARCHAPPL_SHORT_TERM_FOLDER=<%= @short_term_storage %>/ArchiverStore
 ARCHAPPL_MEDIUM_TERM_FOLDER=<%= @mid_term_storage %>/ArchiverStore
 ARCHAPPL_LONG_TERM_FOLDER=<%= @long_term_storage %>/ArchiverStore
 
-ARCHAPPL_MYIDENTITY=appliance<%= nodes_fqdn.index(fqdn) %>
+ARCHAPPL_MYIDENTITY=appliance<%= @nodes_fqdn.index(@fqdn) %>
 ARCHAPPL_APPLIANCES=/etc/archappl/appliances.xml
 
 # We use a lot of memory; so be generous with the heap.
