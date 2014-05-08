@@ -7,8 +7,8 @@
 # -ETL process
 #
 class archiver_appliance(
-  $nodes_fqdn = undef,
-  $loadbalancer = undef,
+  $nodes_fqdn                = undef,
+  $loadbalancer              = undef,
   $archappl_tarball_url      = undef,
   $archappl_tarball_md5sum   = undef,
   $tomcatjdbc_tarball_url    = undef,
