@@ -9,20 +9,29 @@
 class archiver_appliance(
   $nodes_fqdn = undef,
   $loadbalancer = undef,
-  $archappl_tarball_url = undef,
-  $archappl_tarball_md5sum = undef,
-  $tomcatjdbc_tarball_url = undef,
+  $archappl_tarball_url      = undef,
+  $archappl_tarball_md5sum   = undef,
+  $tomcatjdbc_tarball_url    = undef,
   $tomcatjdbc_tarball_md5sum = undef,
-  $short_term_storage = '/srv/sts',
-  $mid_term_storage = '/srv/mts',
-  $long_term_storage = '/srv/lts',
+  $short_term_storage        = '/srv/sts',
+  $mid_term_storage          = '/srv/mts',
+  $long_term_storage         = '/srv/lts',
+  $install_java              = true,
 ) {
   $identity = inline_template("appliance<%= @nodes_fqdn.index(@fqdn) %>")
 
   File { owner => root, group => root, mode => '0644' }
 
-  package { 'openjdk-7-jdk':
-    ensure => installed,
+  if($install_java) {
+    class { 'java':
+      distribution => 'jdk',
+      before       => [
+        Service['archappl-mgmt'],
+        Service['archappl-etl'],
+        Service['archappl-retrieval'],
+        Service['archappl-engine'],
+      ],
+    }
   }
 
   package { 'tomcat7':
@@ -315,7 +324,6 @@ class archiver_appliance(
       File['/usr/share/tomcat7/lib/mysql-connector-java.jar'],
       File['/usr/share/tomcat7/lib/mysql.jar'],
       Archive['apache-tomcat-jdbc'],
-      Package['openjdk-7-jdk'],
       Package['libmysql-java'],
       File['/usr/share/tomcat7/lib/log4j.properties'],
       Exec['create MySQL tables for archiver appliance'],
@@ -339,7 +347,6 @@ class archiver_appliance(
       File['/usr/share/tomcat7/lib/mysql-connector-java.jar'],
       File['/usr/share/tomcat7/lib/mysql.jar'],
       Archive['apache-tomcat-jdbc'],
-      Package['openjdk-7-jdk'],
       Package['libmysql-java'],
       File['/usr/share/tomcat7/lib/log4j.properties'],
       Exec['create MySQL tables for archiver appliance'],
@@ -363,7 +370,6 @@ class archiver_appliance(
       File['/usr/share/tomcat7/lib/mysql-connector-java.jar'],
       File['/usr/share/tomcat7/lib/mysql.jar'],
       Archive['apache-tomcat-jdbc'],
-      Package['openjdk-7-jdk'],
       Package['libmysql-java'],
       File['/usr/share/tomcat7/lib/log4j.properties'],
       Exec['create MySQL tables for archiver appliance'],
@@ -387,7 +393,6 @@ class archiver_appliance(
       File['/usr/share/tomcat7/lib/mysql-connector-java.jar'],
       File['/usr/share/tomcat7/lib/mysql.jar'],
       Archive['apache-tomcat-jdbc'],
-      Package['openjdk-7-jdk'],
       Package['libmysql-java'],
       File['/usr/share/tomcat7/lib/log4j.properties'],
       Exec['create MySQL tables for archiver appliance'],
