@@ -206,6 +206,36 @@ class archiver_appliance(
     require => Exec['deploy multiple tomcats'],
   }
 
+  # for some reason the WAR files do not get exploded automatically anymore
+  # we work around this issue by unpacking them ourselves
+  exec { 'explode WAR file for engine container':
+    command => 'unzip -d /var/lib/tomcat7-archappl/engine/webapps/engine /var/lib/tomcat7-archappl/engine/webapps/engine.war',
+    path    => '/usr/local/bin:/usr/bin:/bin',
+    creates => '/var/lib/tomcat7-archappl/engine/webapps/engine',
+    require => File['/var/lib/tomcat7-archappl/engine/webapps/engine.war'],
+  }
+
+  exec { 'explode WAR file for etl container':
+    command => 'unzip -d /var/lib/tomcat7-archappl/etl/webapps/etl /var/lib/tomcat7-archappl/etl/webapps/etl.war',
+    path    => '/usr/local/bin:/usr/bin:/bin',
+    creates => '/var/lib/tomcat7-archappl/etl/webapps/etl',
+    require => File['/var/lib/tomcat7-archappl/etl/webapps/etl.war'],
+  }
+
+  exec { 'explode WAR file for mgmt container':
+    command => 'unzip -d /var/lib/tomcat7-archappl/mgmt/webapps/mgmt /var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war',
+    path    => '/usr/local/bin:/usr/bin:/bin',
+    creates => '/var/lib/tomcat7-archappl/mgmt/webapps/mgmt',
+    require => File['/var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war'],
+  }
+
+  exec { 'explode WAR file for retrieval container':
+    command => 'unzip -d /var/lib/tomcat7-archappl/retrieval/webapps/retrieval /var/lib/tomcat7-archappl/retrieval/webapps/retrieval.war',
+    path    => '/usr/local/bin:/usr/bin:/bin',
+    creates => '/var/lib/tomcat7-archappl/retrieval/webapps/retrieval',
+    require => File['/var/lib/tomcat7-archappl/retrieval/webapps/retrieval.war'],
+  }
+
   if !defined(File[$short_term_storage]) {
     file { $short_term_storage:
       ensure  => directory,
@@ -293,6 +323,7 @@ class archiver_appliance(
       Exec['create MySQL tables for archiver appliance'],
       File['/var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war'],
       File['/var/lib/tomcat7-archappl/mgmt/conf/context.xml'],
+      Exec['explode WAR file for mgmt container'],
       File['/srv/sts'],
       File['/srv/mts'],
       File['/srv/lts'],
@@ -316,6 +347,7 @@ class archiver_appliance(
       Exec['create MySQL tables for archiver appliance'],
       File['/var/lib/tomcat7-archappl/etl/webapps/etl.war'],
       File['/var/lib/tomcat7-archappl/etl/conf/context.xml'],
+      Exec['explode WAR file for etl container'],
       File['/srv/sts'],
       File['/srv/mts'],
       File['/srv/lts'],
@@ -339,6 +371,7 @@ class archiver_appliance(
       Exec['create MySQL tables for archiver appliance'],
       File['/var/lib/tomcat7-archappl/retrieval/webapps/retrieval.war'],
       File['/var/lib/tomcat7-archappl/retrieval/conf/context.xml'],
+      Exec['explode WAR file for retrieval container'],
       File['/srv/sts'],
       File['/srv/mts'],
       File['/srv/lts'],
@@ -362,6 +395,7 @@ class archiver_appliance(
       Exec['create MySQL tables for archiver appliance'],
       File['/var/lib/tomcat7-archappl/engine/webapps/engine.war'],
       File['/var/lib/tomcat7-archappl/engine/conf/context.xml'],
+      Exec['explode WAR file for engine container'],
       File['/srv/sts'],
       File['/srv/mts'],
       File['/srv/lts'],
