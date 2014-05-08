@@ -1,5 +1,5 @@
 name    'frib-archiver_appliance'
-version '0.1.0'
+version '0.2.0'
 source 'https://stash.nscl.msu.edu/scm/deploy/puppet_module_archiver_appliance.git'
 author 'konrad'
 license 'MIT License (Expat)'
