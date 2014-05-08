@@ -5,7 +5,6 @@ class archiver_appliance::loadbalancer(
   $nodes_fqdn = undef
 )
 {
-  include apt
   include apache
 
   apache::vhost { 'loadbalancer.example.com':

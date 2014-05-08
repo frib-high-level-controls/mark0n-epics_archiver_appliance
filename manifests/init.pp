@@ -19,8 +19,6 @@ class archiver_appliance(
 ) {
   $identity = inline_template("appliance<%= @nodes_fqdn.index(@fqdn) %>")
 
-  include apt
-
   File { owner => root, group => root, mode => '0644' }
 
   package { 'openjdk-7-jdk':
