@@ -17,8 +17,21 @@ class archiver_appliance(
   $mid_term_storage          = '/srv/mts',
   $long_term_storage         = '/srv/lts',
   $install_java              = true,
+  $policies_file             = undef,
+  $properties_file           = undef,
 ) {
+  validate_string($policies_file)
+  validate_string($properties_file)
+
   $identity = inline_template("appliance<%= @nodes_fqdn.index(@fqdn) %>")
+  $real_policies_file = $policies_file ? {
+    undef   => '/etc/archappl/policies.py',
+    default => $policies_file,
+  }
+  $real_properties_file = $properties_file ? {
+    undef   => '/etc/archappl/archappl.properties',
+    default => $properties_file,
+  }
 
   File { owner => root, group => root, mode => '0644' }
 
@@ -31,6 +44,12 @@ class archiver_appliance(
         Service['archappl-retrieval'],
         Service['archappl-engine'],
       ],
+    }
+  }
+
+  if !defined(Package['unzip']) {
+    package { 'unzip':
+      ensure => installed,
     }
   }
 
@@ -211,6 +230,32 @@ class archiver_appliance(
     source  => 'puppet:///modules/archiver_appliance/context.xml',
     owner   => tomcat7,
     require => Exec['deploy multiple tomcats'],
+  }
+
+  if $policies_file == undef {
+    exec { $real_policies_file:
+      command => "unzip -p /var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war WEB-INF/classes/policies.py > ${real_policies_file}",
+      path    => '/usr/local/bin:/usr/bin:/bin',
+      creates => $real_policies_file,
+      require => [
+        Package['unzip'],
+        File['/etc/archappl'],
+        File['/var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war'],
+      ],
+    }
+  }
+
+  if $properties_file == undef {
+    exec { $real_properties_file:
+      command => "unzip -p /var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war WEB-INF/classes/archappl.properties > ${real_properties_file}",
+      path    => '/usr/local/bin:/usr/bin:/bin',
+      creates => $real_properties_file,
+      require => [
+        Package['unzip'],
+        File['/etc/archappl'],
+        File['/var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war'],
+      ],
+    }
   }
 
   # for some reason the WAR files do not get exploded automatically anymore
