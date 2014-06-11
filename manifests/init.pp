@@ -242,6 +242,12 @@ class archiver_appliance(
         File['/etc/archappl'],
         File['/var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war'],
       ],
+      notify  => [
+        Service['archappl-engine'],
+        Service['archappl-etl'],
+        Service['archappl-mgmt'],
+        Service['archappl-retrieval'],
+      ],
     }
   }
 
