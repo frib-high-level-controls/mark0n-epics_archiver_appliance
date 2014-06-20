@@ -23,7 +23,7 @@ class archiver_appliance(
   validate_string($policies_file)
   validate_string($properties_file)
 
-  $identity = inline_template("appliance<%= @nodes_fqdn.index(@fqdn) %>")
+  $identity = inline_template('appliance<%= @nodes_fqdn.index(@fqdn) %>')
   $real_policies_file = $policies_file ? {
     undef   => '/etc/archappl/policies.py',
     default => $policies_file,
