@@ -16,10 +16,16 @@ class archiver_appliance(
   $short_term_storage        = '/srv/sts',
   $mid_term_storage          = '/srv/mts',
   $long_term_storage         = '/srv/lts',
+  $mysql_db                  = 'archappl',
+  $mysql_username            = 'archappl',
+  $mysql_password            = undef,
   $install_java              = true,
   $policies_file             = undef,
   $properties_file           = undef,
 ) {
+  validate_string($mysql_db)
+  validate_string($mysql_username)
+  validate_string($mysql_password)
   validate_string($policies_file)
   validate_string($properties_file)
 
@@ -73,9 +79,9 @@ class archiver_appliance(
     service_enabled => true,
   }
 
-  mysql::db { 'archappl':
-    user     => 'archappl',
-    password => 'archappl',
+  mysql::db { $mysql_db:
+    user     => $mysql_username,
+    password => $mysql_password,
     host     => 'localhost',
     charset  => 'utf8',
     collate  => 'utf8_general_ci',
@@ -83,10 +89,10 @@ class archiver_appliance(
   }
 
   exec { 'create MySQL tables for archiver appliance':
-    command => '/usr/bin/mysql --user=archappl --password=archappl --database=archappl < /tmp/archappl/install_scripts/archappl_mysql.sql',
-    onlyif  => '/usr/bin/test `/usr/bin/mysql --user=archappl --password=archappl --database=archappl --batch --skip-column-names -e \'SHOW TABLES\' | /usr/bin/wc -l` -lt 4',
+    command => "/usr/bin/mysql --user=${mysql_username} --password=${mysql_password} --database=${mysql_db} < /tmp/archappl/install_scripts/archappl_mysql.sql",
+    onlyif  => "/usr/bin/test `/usr/bin/mysql --user=${mysql_username} --password=${mysql_password} --database=${mysql_db} --batch --skip-column-names -e \'SHOW TABLES\' | /usr/bin/wc -l` -lt 4",
     require => [
-      Mysql::Db['archappl'],
+      Mysql::Db[$mysql_db],
       Archive['archappl']
     ]
   }
@@ -206,28 +212,28 @@ class archiver_appliance(
 
   file { '/var/lib/tomcat7-archappl/engine/conf/context.xml':
     ensure  => file,
-    source  => 'puppet:///modules/archiver_appliance/context.xml',
+    content => template('archiver_appliance/context.xml'),
     owner   => tomcat7,
     require => Exec['deploy multiple tomcats'],
   }
 
   file { '/var/lib/tomcat7-archappl/etl/conf/context.xml':
     ensure  => file,
-    source  => 'puppet:///modules/archiver_appliance/context.xml',
+    content => template('archiver_appliance/context.xml'),
     owner   => tomcat7,
     require => Exec['deploy multiple tomcats'],
   }
 
   file { '/var/lib/tomcat7-archappl/mgmt/conf/context.xml':
     ensure  => file,
-    source  => 'puppet:///modules/archiver_appliance/context.xml',
+    content => template('archiver_appliance/context.xml'),
     owner   => tomcat7,
     require => Exec['deploy multiple tomcats'],
   }
 
   file { '/var/lib/tomcat7-archappl/retrieval/conf/context.xml':
     ensure  => file,
-    source  => 'puppet:///modules/archiver_appliance/context.xml',
+    content => template('archiver_appliance/context.xml'),
     owner   => tomcat7,
     require => Exec['deploy multiple tomcats'],
   }

@@ -35,8 +35,8 @@
         auth="Container"
         type="javax.sql.DataSource"
         factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-        username="archappl"
-        password="archappl"
+        username="<%= @mysql_username %>"
+        password="<%= @mysql_password %>"
         testWhileIdle="true"
         testOnBorrow="true"
         testOnReturn="false"
@@ -53,6 +53,6 @@
         minEvictableIdleTimeMillis="30000"
         jmxEnabled="true"
         driverClassName="com.mysql.jdbc.Driver"
-        url="jdbc:mysql://localhost:3306/archappl"
+        url="jdbc:mysql://localhost:3306/<%= @mysql_db %>"
     />
 </Context>
