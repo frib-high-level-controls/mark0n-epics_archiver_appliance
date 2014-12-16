@@ -19,6 +19,10 @@ class archiver_appliance(
   $mysql_db                  = 'archappl',
   $mysql_username            = 'archappl',
   $mysql_password            = undef,
+  $enable_mysql_backups      = true,
+  $mysql_backup_hour         = '4',
+  $mysql_backup_minute       = '0',
+  $mysql_backup_dir          = '/var/backups',
   $install_java              = true,
   $policies_file             = undef,
   $properties_file           = undef,
@@ -26,6 +30,8 @@ class archiver_appliance(
   validate_string($mysql_db)
   validate_string($mysql_username)
   validate_string($mysql_password)
+  validate_bool($enable_mysql_backups)
+  validate_string($mysql_backup_dir)
   validate_string($policies_file)
   validate_string($properties_file)
 
@@ -37,6 +43,10 @@ class archiver_appliance(
   $real_properties_file = $properties_file ? {
     undef   => '/etc/archappl/archappl.properties',
     default => $properties_file,
+  }
+  $mysql_backup_present = $enable_mysql_backups ? {
+    false   => 'absent',
+    default => 'present',
   }
 
   File { owner => root, group => root, mode => '0644' }
@@ -461,6 +471,29 @@ class archiver_appliance(
       File[$long_term_storage],
       File['/etc/default/archappl-engine'],
       File['/etc/init.d/archappl-engine'],
+    ],
+  }
+
+  class { 'mysql::client':
+  }
+
+  file { '/usr/local/bin/backup_archiver_appliance_db.sh':
+    ensure  => $mysql_backup_present,
+    content => template('archiver_appliance/usr/local/bin/backup_archiver_appliance_db.sh'),
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+  }
+
+  cron { 'backup-pv-configuration':
+    ensure  => $mysql_backup_present,
+    command => '/usr/local/bin/backup_archiver_appliance_db.sh',
+    user    => root,
+    hour    => $mysql_backup_hour,
+    minute  => $mysql_backup_minute,
+    require => [
+      Class['mysql::client'],
+      File['/usr/local/bin/backup_archiver_appliance_db.sh'],
     ],
   }
 }
