@@ -18,6 +18,10 @@ class archiver_appliance::params {
   $mysql_backup_minute       = '0'
   $mysql_backup_dir          = '/var/backups'
   $install_java              = true
-  $policies_file             = undef
-  $properties_file           = undef
+  $policies_file             = '/etc/archappl/policies.py'
+  $policies_file_source      = undef
+  $policies_file_content     = undef
+  $properties_file           = '/etc/archappl/archappl.properties'
+  $properties_file_source    = undef
+  $properties_file_content   = undef
 }

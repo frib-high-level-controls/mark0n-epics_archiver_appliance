@@ -4,8 +4,8 @@ ARCHAPPL_LONG_TERM_FOLDER=<%= @long_term_storage %>/ArchiverStore
 
 ARCHAPPL_MYIDENTITY=appliance<%= @nodes_fqdn.index(@fqdn) %>
 ARCHAPPL_APPLIANCES=/etc/archappl/appliances.xml
-ARCHAPPL_POLICIES=<%= @real_policies_file %>
-ARCHAPPL_PROPERTIES_FILENAME=<%= @real_properties_file %>
+ARCHAPPL_POLICIES=<%= @policies_file %>
+ARCHAPPL_PROPERTIES_FILENAME=<%= @properties_file %>
 
 JAVA_OPTS="-XX:MaxPermSize=128M -Xmx128M -Xms128M -ea"
 

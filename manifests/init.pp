@@ -25,7 +25,11 @@ class archiver_appliance(
   $mysql_backup_dir          = $archiver_appliance::params::mysql_backup_dir,
   $install_java              = $archiver_appliance::params::install_java,
   $policies_file             = $archiver_appliance::params::policies_file,
+  $policies_file_source      = $archiver_appliance::params::policies_file_source,
+  $policies_file_content     = $archiver_appliance::params::policies_file_content,
   $properties_file           = $archiver_appliance::params::properties_file,
+  $properties_file_source    = $archiver_appliance::params::properties_file_source,
+  $properties_file_content   = $archiver_appliance::params::properties_file_content,
 ) inherits archiver_appliance::params {
   validate_string($mysql_db)
   validate_string($mysql_username)
@@ -33,17 +37,13 @@ class archiver_appliance(
   validate_bool($enable_mysql_backups)
   validate_string($mysql_backup_dir)
   validate_string($policies_file)
+  validate_string($policies_file_source)
+  validate_string($policies_file_content)
   validate_string($properties_file)
+  validate_string($properties_file_source)
+  validate_string($properties_file_content)
 
   $identity = inline_template('appliance<%= @nodes_fqdn.index(@fqdn) %>')
-  $real_policies_file = $policies_file ? {
-    undef   => '/etc/archappl/policies.py',
-    default => $policies_file,
-  }
-  $real_properties_file = $properties_file ? {
-    undef   => '/etc/archappl/archappl.properties',
-    default => $properties_file,
-  }
   $mysql_backup_present = $enable_mysql_backups ? {
     false   => 'absent',
     default => 'present',
@@ -248,11 +248,11 @@ class archiver_appliance(
     require => Exec['deploy multiple tomcats'],
   }
 
-  if $policies_file == undef {
-    exec { $real_policies_file:
-      command => "unzip -p /var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war WEB-INF/classes/policies.py > ${real_policies_file}",
+  if $policies_file_source == undef and $policies_file_content == undef {
+    exec { $policies_file:
+      command => "unzip -p /var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war WEB-INF/classes/policies.py > ${policies_file}",
       path    => '/usr/local/bin:/usr/bin:/bin',
-      creates => $real_policies_file,
+      creates => $policies_file,
       require => [
         Package['unzip'],
         File['/etc/archappl'],
@@ -265,17 +265,47 @@ class archiver_appliance(
         Service['archappl-retrieval'],
       ],
     }
+  } else {
+    file { $policies_file:
+      ensure  => file,
+      source  => $policies_file_source,
+      content => $policies_file_content,
+      owner   => root,
+      group   => root,
+      mode    => '0644',
+      notify  => [
+        Service['archappl-engine'],
+        Service['archappl-etl'],
+        Service['archappl-mgmt'],
+        Service['archappl-retrieval'],
+      ],
+    }
   }
 
-  if $properties_file == undef {
-    exec { $real_properties_file:
-      command => "unzip -p /var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war WEB-INF/classes/archappl.properties > ${real_properties_file}",
+  if $properties_file_source == undef and $properties_file_content == undef {
+    exec { $properties_file:
+      command => "unzip -p /var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war WEB-INF/classes/archappl.properties > ${properties_file}",
       path    => '/usr/local/bin:/usr/bin:/bin',
-      creates => $real_properties_file,
+      creates => $properties_file,
       require => [
         Package['unzip'],
         File['/etc/archappl'],
         File['/var/lib/tomcat7-archappl/mgmt/webapps/mgmt.war'],
+      ],
+    }
+  } else {
+    file { $properties_file:
+      ensure  => file,
+      source  => $properties_file_source,
+      content => $properties_file_content,
+      owner   => root,
+      group   => root,
+      mode    => '0644',
+      notify  => [
+        Service['archappl-engine'],
+        Service['archappl-etl'],
+        Service['archappl-mgmt'],
+        Service['archappl-retrieval'],
       ],
     }
   }
