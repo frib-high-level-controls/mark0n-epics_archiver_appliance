@@ -17,7 +17,7 @@ class archiver_appliance::loadbalancer(
     ],
   }
 
-  lbmember { $nodes_fqdn: }
+  archiver_appliance::lbmember { $nodes_fqdn: }
 
   apache::balancer { 'archivercluster':
     collect_exported => false,
