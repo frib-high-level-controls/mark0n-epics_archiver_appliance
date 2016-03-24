@@ -7,6 +7,9 @@ class archiver_appliance::loadbalancer(
 {
   include apache
 
+  apache::mod { 'slotmem_shm': }
+  apache::mod { 'lbmethod_byrequests': }
+
   apache::vhost { 'loadbalancer.example.com':
     docroot    => '/var/www',
     proxy_pass => [
