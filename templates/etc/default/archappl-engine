@@ -18,7 +18,4 @@ CATALINA_HOME=/usr/share/tomcat7
 CATALINA_BASE=/var/lib/tomcat7-archappl/engine
 
 EPICS_CA_AUTO_ADDR_LIST=yes
-
-# Make sure address list is not empty. This is needed to work around a CAJ bug
-# (see http://www.aps.anl.gov/epics/tech-talk/2014/msg00045.php).
-EPICS_CA_ADDR_LIST=127.0.0.1
+EPICS_CA_ADDR_LIST=
